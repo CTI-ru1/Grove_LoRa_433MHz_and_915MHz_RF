@@ -4,10 +4,10 @@
 // Copyright (C) 2011 Mike McCauley
 // $Id: RHReliableDatagram.h,v 1.16 2015/08/12 23:18:51 mikem Exp $
 
-#ifndef RHReliableDatagram_h
-#define RHReliableDatagram_h
+#ifndef RHReliableDatagram_grove_h
+#define RHReliableDatagram_grove_h
 
-#include <RHDatagram.h>
+#include <RHDatagram_grove.h>
 
 // The acknowledgement bit in the FLAGS
 // The top 4 bits of the flags are reserved for RadioHead. The lower 4 bits are reserved

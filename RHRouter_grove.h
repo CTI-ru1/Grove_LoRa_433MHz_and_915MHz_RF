@@ -4,10 +4,10 @@
 // Copyright (C) 2011 Mike McCauley
 // $Id: RHRouter.h,v 1.9 2014/08/10 20:55:17 mikem Exp $
 
-#ifndef RHRouter_h
-#define RHRouter_h
+#ifndef RHRouter_grove_h
+#define RHRouter_grove_h
 
-#include <RHReliableDatagram.h>
+#include <RHReliableDatagram_grove.h>
 
 // Default max number of hops we will route
 #define RH_DEFAULT_MAX_HOPS 30

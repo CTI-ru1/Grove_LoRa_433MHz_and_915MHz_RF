@@ -33,7 +33,7 @@
 
 
 #include <Arduino.h>
-#include <RHGenericDriver.h>
+#include <RHGenericDriver_grove.h>
 #include <SoftwareSerial.h>
 
 

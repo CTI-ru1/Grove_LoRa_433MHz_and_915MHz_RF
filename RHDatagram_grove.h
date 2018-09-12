@@ -3,10 +3,10 @@
 // Copyright (C) 2011 Mike McCauley
 // $Id: RHDatagram.h,v 1.14 2015/08/12 23:18:51 mikem Exp $
 
-#ifndef RHDatagram_h
-#define RHDatagram_h
+#ifndef RHDatagram_grove_h
+#define RHDatagram_grove_h
 
-#include <RHGenericDriver.h>
+#include <RHGenericDriver_grove.h>
 
 // This is the maximum possible message size for radios supported by RadioHead.
 // Not all radios support this length, and many are much smaller

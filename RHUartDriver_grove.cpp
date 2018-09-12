@@ -28,7 +28,7 @@
  * THE SOFTWARE.
  */
 
-#include <RHUartDriver.h>
+#include <RHUartDriver_grove.h>
 
 
 RHUartDriver::RHUartDriver(SoftwareSerial& ss)

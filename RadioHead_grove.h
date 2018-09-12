@@ -643,8 +643,8 @@
 ///
 /// \author  Mike McCauley. DO NOT CONTACT THE AUTHOR DIRECTLY. USE THE MAILING LIST GIVEN ABOVE
 
-#ifndef RadioHead_h
-#define RadioHead_h
+#ifndef RadioHead_grove_h
+#define RadioHead_grove_h
 
 // Official version numbers are maintained automatically by Makefile:
 #define RH_VERSION_MAJOR 1

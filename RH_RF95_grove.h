@@ -1,10 +1,10 @@
 
 
-#ifndef RH_RF95_h
-#define RH_RF95_h
+#ifndef RH_RF95_grove_h
+#define RH_RF95_grove_h
 
 
-#include <RHUartDriver.h>
+#include <RHUartDriver_grove.h>
 
 
 #define RH_HAVE_SERIAL

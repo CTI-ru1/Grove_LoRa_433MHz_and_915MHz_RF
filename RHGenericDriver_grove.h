@@ -3,10 +3,10 @@
 // Copyright (C) 2014 Mike McCauley
 // $Id: RHGenericDriver.h,v 1.16 2015/01/02 21:38:24 mikem Exp $
 
-#ifndef RHGenericDriver_h
-#define RHGenericDriver_h
+#ifndef RHGenericDriver_grove_h
+#define RHGenericDriver_grove_h
 
-#include <RadioHead.h>
+#include <RadioHead_grove.h>
 
 // Defines bits of the FLAGS header reserved for use by the RadioHead library and 
 // the flags available for use by applications
