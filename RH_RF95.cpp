@@ -27,12 +27,14 @@ bool RH_RF95::init()
     
     // Set sleep mode, so we can also set LORA mode:
     write(RH_RF95_REG_01_OP_MODE, RH_RF95_MODE_SLEEP | RH_RF95_LONG_RANGE_MODE);
-    delay(10); // Wait for sleep mode to take over from say, CAD
+    // Gaia: wait even more time (10 -> 100)
+    delay(100); // Wait for sleep mode to take over from say, CAD
     
     // Check we are in sleep mode, with LORA set
     if (read(RH_RF95_REG_01_OP_MODE) != (RH_RF95_MODE_SLEEP | RH_RF95_LONG_RANGE_MODE))
     {
         Serial.println(read(RH_RF95_REG_01_OP_MODE), HEX);
+	    Serial.println("Not in sleep or LoRa mode");	
         return false; // No device present?
     }
 
@@ -53,13 +55,24 @@ bool RH_RF95::init()
     // Set up default configuration
     // No Sync Words in LORA mode.
     setModemConfig(Bw125Cr45Sf128); // Radio default
+    //Serial.println("Slow and reliable mode");
     //setModemConfig(Bw125Cr48Sf4096); // slow and reliable?
+    //Serial.println("Slow and reliable mode selected");
     setPreambleLength(8); // Default is 8
     // An innocuous ISM frequency, same as RF22's
     //setFrequency(434.0);
     setFrequency(868.0);
     // Lowish power
     setTxPower(13);
+
+    // Gaia: Set specific settings for LoRa
+    // Setup Spreading Factor (6 ~ 12)
+  	setSpreadingFactor(8);
+    // Setup BandWidth, option: 7800,10400,15600,20800,31200,41700,62500,125000,250000,500000
+    // Lower BandWidth for longer distance.
+    //setSignalBandwidth(125000);
+    // Setup Coding Rate:5(4/5),6(4/6),7(4/7),8(4/8) 
+    //setCodingRate4(1);	
 
     return true;
 }
@@ -165,8 +178,19 @@ bool RH_RF95::send(uint8_t* data, uint8_t len)
     if (len > RH_RF95_MAX_MESSAGE_LEN)
 	return false;
 
-    waitPacketSent(); // Make sure we dont interrupt an outgoing message
+    //Serial.println("Before waitPacketSent()");
+    if (waitPacketSent(2000)) // Make sure we dont interrupt an outgoing message
+    {
+        //Serial.println("Packet sent successful");
+    }
+    else
+    {
+        //Serial.println("Packet sent not succesful");
+        return false;
+    }
+    //Serial.println("After waitPacketSent()");
     setModeIdle();
+    //Serial.println("After setModeIdle()");
 
     // Position at the beginning of the FIFO
     write(RH_RF95_REG_0D_FIFO_ADDR_PTR, 0);
@@ -176,12 +200,15 @@ bool RH_RF95::send(uint8_t* data, uint8_t len)
     write(RH_RF95_REG_00_FIFO, _txHeaderFrom);
     write(RH_RF95_REG_00_FIFO, _txHeaderId);
     write(RH_RF95_REG_00_FIFO, _txHeaderFlags);
-    
+    //Serial.println("Finished writting headers");
+
     // The message data
     burstWrite(RH_RF95_REG_00_FIFO, data, len);
     write(RH_RF95_REG_22_PAYLOAD_LENGTH, len + RH_RF95_HEADER_LEN);
+    //Serial.println("Finished writting message");
 
     setModeTx(); // Start the transmitter
+    //Serial.println("After setModeTx()");	
     // when Tx is done, interruptHandler will fire and radio mode will return to STANDBY
     
     //write(RH_RF95_REG_12_IRQ_FLAGS, 0xff); // Clear all IRQ flags
@@ -295,6 +322,67 @@ void RH_RF95::setTxPower(int8_t power, bool useRFO)
         // My measurements show 20dBm is correct
         write(RH_RF95_REG_09_PA_CONFIG, RH_RF95_PA_SELECT | (power-5));
     }
+}
+
+void RH_RF95::setSpreadingFactor(int8_t sf)
+{
+  if (sf < 6) {
+    sf = 6;
+  } else if (sf > 12) {
+    sf = 12;
+  }
+
+  if (sf == 6) {
+     write(RH_RF95_REG_31_DETECTION_OPTIMIZE, 0xc5);
+     write(RH_RF95_REG_37_DETECTION_THRESHOLD, 0x0c);
+  } else {
+     write(RH_RF95_REG_31_DETECTION_OPTIMIZE, 0xc3);
+     write(RH_RF95_REG_37_DETECTION_THRESHOLD, 0x0a);
+  }
+
+   write(RH_RF95_REG_1E_MODEM_CONFIG2, (read(RH_RF95_REG_1E_MODEM_CONFIG2) & 0x0f) | ((sf << 4) & 0xf0));
+}
+
+void RH_RF95::setSignalBandwidth(long sbw)
+{
+  int bw;
+
+  if (sbw <= 7.8E3) {
+    bw = 0;
+  } else if (sbw <= 10.4E3) {
+    bw = 1;
+  } else if (sbw <= 15.6E3) {
+    bw = 2;
+  } else if (sbw <= 20.8E3) {
+    bw = 3;
+  } else if (sbw <= 31.25E3) {
+    bw = 4;
+  } else if (sbw <= 41.7E3) {
+    bw = 5;
+  } else if (sbw <= 62.5E3) {
+    bw = 6;
+  } else if (sbw <= 125E3) {
+    bw = 7;
+  } else if (sbw <= 250E3) {
+    bw = 8;
+  } else /*if (sbw <= 250E3)*/ {
+    bw = 9;
+  }
+
+   write(RH_RF95_REG_1D_MODEM_CONFIG1, (read(RH_RF95_REG_1D_MODEM_CONFIG1) & 0x0f) | (bw << 4));
+}
+
+void RH_RF95::setCodingRate4(int8_t denominator)
+{
+  if (denominator < 5) {
+    denominator = 5;
+  } else if (denominator > 8) {
+    denominator = 8;
+  }
+
+  int cr = denominator - 4;
+
+   write(RH_RF95_REG_1D_MODEM_CONFIG1, (read(RH_RF95_REG_1D_MODEM_CONFIG1) & 0xf1) | (cr << 1));
 }
 
 // Sets registers from a canned modem configuration structure
