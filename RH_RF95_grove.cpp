@@ -11,6 +11,7 @@ PROGMEM static const RH_RF95::ModemConfig MODEM_CONFIG_TABLE[] =
     { 0x92,   0x74,    0x00}, // Bw500Cr45Sf128
     { 0x48,   0x94,    0x00}, // Bw31_25Cr48Sf512
     { 0x78,   0xc4,    0x00}, // Bw125Cr48Sf4096
+    { 0x72,   0x94,    0x00}, // Bw125Cr45Sf256
     
 };
 
@@ -54,7 +55,8 @@ bool RH_RF95::init()
 
     // Set up default configuration
     // No Sync Words in LORA mode.
-    setModemConfig(Bw125Cr45Sf128); // Radio default
+    setModemConfig(Bw125Cr45Sf256);
+    //setModemConfig(Bw125Cr45Sf128); // Radio default
     //Serial.println("Slow and reliable mode");
     //setModemConfig(Bw125Cr48Sf4096); // slow and reliable?
     //Serial.println("Slow and reliable mode selected");
@@ -67,7 +69,7 @@ bool RH_RF95::init()
 
     // Gaia: Set specific settings for LoRa
     // Setup Spreading Factor (6 ~ 12)
-  	setSpreadingFactor(8);
+    //setSpreadingFactor(8);
     // Setup BandWidth, option: 7800,10400,15600,20800,31200,41700,62500,125000,250000,500000
     // Lower BandWidth for longer distance.
     //setSignalBandwidth(125000);
@@ -179,7 +181,7 @@ bool RH_RF95::send(uint8_t* data, uint8_t len)
 	return false;
 
     //Serial.println("Before waitPacketSent()");
-    if (waitPacketSent(2000)) // Make sure we dont interrupt an outgoing message
+    if (waitPacketSent()) // Make sure we dont interrupt an outgoing message
     {
         //Serial.println("Packet sent successful");
     }
