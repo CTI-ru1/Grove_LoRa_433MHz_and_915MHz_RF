@@ -200,7 +200,7 @@
 #define RH_RF95_AGC_AUTO_ON                           0x04
 #define RH_RF95_SYM_TIMEOUT_MSB                       0x03
 
-// RH_RF95_REG_4D_PA_DAC                              0x4d
+// RH_RF95_REG_4D_PA_DAC                              0x4dlastRssi
 #define RH_RF95_PA_DAC_DISABLE                        0x04
 #define RH_RF95_PA_DAC_ENABLE                         0x07
 
@@ -237,7 +237,10 @@ public:
         Bw500Cr45Sf128,	           ///< Bw = 500 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on. Fast+short range
         Bw31_25Cr48Sf512,	   ///< Bw = 31.25 kHz, Cr = 4/8, Sf = 512chips/symbol, CRC on. Slow+long range
         Bw125Cr48Sf4096,           ///< Bw = 125 kHz, Cr = 4/8, Sf = 4096chips/symbol, CRC on. Slow+long range
-        Bw125Cr45Sf256,
+        Bw125Cr45Sf256,		   ///< Bw = 125 kHz, Cr = 4/5, Sf = 9 (512 chips/symbol), CRC on.	
+	Bw250Cr45Sf128,             ///< Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on. Header enablem, Low Data Rate disable
+        Bw500Cr45Sf64,              ///< Bw = 500 kHz, Cr = 4/5, Sf = 64chips/symbol, CRC on. Header disable, Low Data Rate disable 
+        Bw500Cr45Sf128b,              ///< Bw = 500 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on. Header disable, Low Data Rate disable
     } ModemConfigChoice;
 
     RH_RF95(SoftwareSerial& ss);
