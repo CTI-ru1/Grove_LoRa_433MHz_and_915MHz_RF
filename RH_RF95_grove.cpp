@@ -68,7 +68,7 @@ bool RH_RF95::init()
     setPreambleLength(8); // Default is 8
     // An innocuous ISM frequency, same as RF22's
    // setFrequency(433.0);
-    setFrequency(868.3);
+    setFrequency(868.7);
     // Lowish power
     setTxPower(13);
 
@@ -112,6 +112,7 @@ void RH_RF95::handleInterrupt()
         // this is according to the doc, but is it really correct?
         // weakest receiveable signals are reported RSSI at about -66
         _lastRssi = read(RH_RF95_REG_1A_PKT_RSSI_VALUE) - 137;
+	_lastSNR =(~read(RH_RF95_REG_19_PKT_SNR_VALUE)+1)/4;
 
         // We have received a message.
         validateRxBuf(); 

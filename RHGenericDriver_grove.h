@@ -174,6 +174,7 @@ public:
     /// If you called readRssi() more recently, it will return that more recent value.
     /// \return The most recent RSSI measurement in dBm.
     int8_t lastRssi();
+    int8_t lastSNR();
 
     /// Returns the operating mode of the library.
     /// \return the current mode, one of RF69_MODE_*
@@ -251,6 +252,9 @@ protected:
 
     /// The value of the last received RSSI value, in some transport specific units
     volatile int8_t _lastRssi;
+
+/// The value of the last received SNR value, in some transport specific units
+    volatile int8_t _lastSNR;
 
     /// Count of the number of bad messages (eg bad checksum etc) received
     volatile uint16_t _rxBad;
